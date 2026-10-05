@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Mis tareas | TigTask{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div>
+        <p class="eyebrow">Panel de trabajo</p>
+        <h1>Organiza el trabajo del equipo</h1>
+        <p class="hero-copy">Consulta el avance, encuentra una tarea y mantén claras las prioridades del proyecto.</p>
+    </div>
+    <a class="button button-primary" href="{% url 'tareas:crear' %}" data-open-task-modal>
+        <i data-lucide="plus" aria-hidden="true"></i> Crear tarea
+    </a>
+</section>
+
+<section class="stats" aria-label="Resumen de tareas">
+    <article class="stat-card stat-total">
+        <span class="stat-icon" aria-hidden="true"><i data-lucide="list-todo"></i></span>
+        <div><strong>{{ total_tareas }}</strong><span>Total</span></div>
+    </article>
+    <article class="stat-card stat-pending">
+        <span class="stat-icon" aria-hidden="true"><i data-lucide="circle-dot-dashed"></i></span>
+        <div><strong>{{ tareas_pendientes }}</strong><span>Pendientes</span></div>
+    </article>
+    <article class="stat-card stat-progress">
+        <span class="stat-icon" aria-hidden="true"><i data-lucide="loader-circle"></i></span>
+        <div><strong>{{ tareas_en_proceso }}</strong><span>En proceso</span></div>
+    </article>
+    <article class="stat-card stat-done">
+        <span class="stat-icon" aria-hidden="true"><i data-lucide="circle-check-big"></i></span>
+        <div><strong>{{ tareas_completadas }}</strong><span>Completadas</span></div>
+    </article>
+</section>
+
+<section class="panel" aria-labelledby="titulo-listado">
+    <div class="panel-heading">
+        <div>
+            <p class="eyebrow">Seguimiento</p>
+            <h2 id="titulo-listado">Tareas del proyecto</h2>
+        </div>
+        <span class="result-count">{{ page_obj.paginator.count }} resultado{{ page_obj.paginator.count|pluralize }}</span>
+    </div>
+
+    <form class="filters" method="get" role="search">
+        <div class="field field-search">
+            <label for="busqueda">Buscar</label>
+            <div class="input-with-icon">
+                <i data-lucide="search" aria-hidden="true"></i>
+                <input id="busqueda" name="q" type="search" value="{{ filtros.q|default:'' }}" placeholder="Título, descripción o responsable">
+            </div>
+        </div>
+        <div class="field">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado">
+                <option value="">Todos</option>
+                {% for valor, etiqueta in estados %}
+                    <option value="{{ valor }}" {% if filtros.estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="prioridad">Prioridad</label>
+            <select id="prioridad" name="prioridad">
+                <option value="">Todas</option>
+                {% for valor, etiqueta in prioridades %}
+                    <option value="{{ valor }}" {% if filtros.prioridad == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-actions">
+            <button class="button button-secondary" type="submit">Filtrar</button>
+            {% if filtros.q or filtros.estado or filtros.prioridad %}
+                <a class="text-link" href="{% url 'tareas:lista' %}">Limpiar</a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if tareas %}
+        <div class="task-list">
+            {% for tarea in tareas %}
+                <article class="task-card">
+                    <div class="task-accent priority-{{ tarea.prioridad }}" aria-hidden="true"></div>
+                    <div class="task-main">
+                        <div class="task-heading">
+                            <div>
+                                <div class="badges">
+                                    <span class="badge status-{{ tarea.estado }}">{{ tarea.get_estado_display }}</span>
+                                    <span class="badge priority-label-{{ tarea.prioridad }}">Prioridad {{ tarea.get_prioridad_display|lower }}</span>
+                                </div>
+                                <h3><a href="{% url 'tareas:detalle' tarea.pk %}">{{ tarea.titulo }}</a></h3>
+                            </div>
+                            <div class="task-actions" aria-label="Acciones para {{ tarea.titulo }}">
+                                <a class="icon-button" href="{% url 'tareas:editar' tarea.pk %}" title="Editar tarea" aria-label="Editar {{ tarea.titulo }}"><i data-lucide="pencil"></i></a>
+                                <a class="icon-button icon-danger" href="{% url 'tareas:eliminar' tarea.pk %}" title="Eliminar tarea" aria-label="Eliminar {{ tarea.titulo }}"><i data-lucide="trash-2"></i></a>
+                            </div>
+                        </div>
+                        <p class="task-description">{{ tarea.descripcion|truncatechars:140 }}</p>
+                        <div class="task-meta">
+                            <span><i data-lucide="user-round" aria-hidden="true"></i> {{ tarea.responsable }}</span>
+                            <span><i data-lucide="calendar-clock" aria-hidden="true"></i> {% if tarea.fecha_limite %}Vence {{ tarea.fecha_limite|date:"d M Y" }}{% else %}Sin fecha límite{% endif %}</span>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+            <nav class="pagination" aria-label="Paginación">
+                {% if page_obj.has_previous %}
+                    <a class="button button-secondary button-small" href="?page={{ page_obj.previous_page_number }}&q={{ filtros.q|default:'' }}&estado={{ filtros.estado|default:'' }}&prioridad={{ filtros.prioridad|default:'' }}">Anterior</a>
+                {% endif %}
+                <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a class="button button-secondary button-small" href="?page={{ page_obj.next_page_number }}&q={{ filtros.q|default:'' }}&estado={{ filtros.estado|default:'' }}&prioridad={{ filtros.prioridad|default:'' }}">Siguiente</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true"><i data-lucide="clipboard-check"></i></span>
+            <h3>No hay tareas para mostrar</h3>
+            {% if filtros.q or filtros.estado or filtros.prioridad %}
+                <p>No encontramos resultados con los filtros seleccionados.</p>
+                <a class="button button-secondary" href="{% url 'tareas:lista' %}">Limpiar filtros</a>
+            {% else %}
+                <p>Crea la primera tarea del proyecto para comenzar.</p>
+                <a class="button button-primary" href="{% url 'tareas:crear' %}" data-open-task-modal>Crear primera tarea</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+
+<dialog class="task-modal" id="task-modal" aria-labelledby="modal-title" {% if abrir_modal %}data-auto-open="true"{% endif %}>
+    <div class="modal-card">
+        <div class="modal-heading">
+            <span class="form-icon" aria-hidden="true"><i data-lucide="plus"></i></span>
+            <div>
+                <p class="eyebrow">Nueva actividad</p>
+                <h2 id="modal-title">Crear tarea</h2>
+                <p>Completa los datos principales para organizar el trabajo.</p>
+            </div>
+            <button class="modal-close" type="button" data-close-task-modal aria-label="Cerrar formulario"><i data-lucide="x" aria-hidden="true"></i></button>
+        </div>
+
+        <form method="post" action="{% url 'tareas:crear' %}" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-grid">
+                {% for field in form %}
+                    <div class="field {% if field.name == 'titulo' or field.name == 'descripcion' %}field-full{% endif %}">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}{% if field.field.required %}<span class="required" aria-hidden="true"> *</span>{% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<small class="field-error" role="alert">{{ error }}</small>{% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-note"><span class="required">*</span> Campos obligatorios</div>
+            <div class="form-actions">
+                <button class="button button-ghost" type="button" data-close-task-modal>Cancelar</button>
+                <button class="button button-primary" type="submit">Crear tarea</button>
+            </div>
+        </form>
+    </div>
+</dialog>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (() => {
+        const modal = document.querySelector("#task-modal");
+        if (!modal) return;
+
+        const openModal = (event) => {
+            event.preventDefault();
+            if (!modal.open) modal.showModal();
+        };
+
+        document.querySelectorAll("[data-open-task-modal]").forEach((button) => {
+            button.addEventListener("click", openModal);
+        });
+
+        document.querySelectorAll("[data-close-task-modal]").forEach((button) => {
+            button.addEventListener("click", () => modal.close());
+        });
+
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) modal.close();
+        });
+
+        modal.addEventListener("close", () => {
+            if (window.location.pathname !== "{% url 'tareas:lista' %}") {
+                window.history.replaceState(null, "", "{% url 'tareas:lista' %}");
+            }
+        });
+
+        if (modal.dataset.autoOpen === "true") modal.showModal();
+    })();
+</script>
+{% endblock %}
