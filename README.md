@@ -1,25 +1,85 @@
-# TigTask - Sistema de Gestión de Tareas
+# TigTask - Gestión de Tareas
 
-TigTask es una aplicación web sencilla desarrollada con Django para administrar las tareas de un equipo de software. El proyecto permite aplicar control de versiones, seguimiento de cambios y organización de elementos de configuración durante una práctica experimental.
+TigTask es una aplicación web responsiva desarrollada con Django para organizar las tareas de un equipo de software. El proyecto permite aplicar control de versiones, seguimiento de cambios y organización de los elementos de configuración durante una práctica experimental.
 
-## Funciones
+## Vista del proyecto
 
-- Crear, consultar, editar y eliminar tareas.
-- Clasificar por prioridad y estado.
-- Buscar por título, descripción o responsable.
-- Filtrar las tareas desde el listado.
-- Consultar un resumen del avance del proyecto.
-- Registrar usuarios e iniciar sesión mediante correo electrónico.
-- Mostrar el nombre y la imagen de perfil del usuario.
-- Administrar los registros desde Django Admin.
+### Panel principal
+
+El panel reúne el resumen de tareas, los filtros de búsqueda y las acciones principales en un solo espacio de trabajo.
+
+![Panel principal de TigTask](assets/capturas/panel-principal.jpg)
+
+### Inicio de sesión
+
+La pantalla de acceso combina la identidad visual de TigTask con un formulario claro para ingresar mediante correo electrónico.
+
+![Inicio de sesión de TigTask](assets/capturas/inicio-sesion.jpg)
+
+### Registro de usuarios
+
+Los nuevos usuarios pueden crear una cuenta con sus nombres, apellidos, correo y contraseña.
+
+![Registro de usuarios de TigTask](assets/capturas/registro-usuarios.jpg)
+
+### Dispositivo móvil
+
+La interfaz reorganiza sus elementos para facilitar el uso desde teléfonos y pantallas pequeñas.
+
+![Registro de TigTask en móvil](assets/capturas/registro-movil.jpg)
+
+## Funcionalidades
+
+- Registro e inicio de sesión mediante correo electrónico.
+- Perfil de usuario con nombre abreviado y avatar predeterminado.
+- Creación de tareas desde un formulario modal.
+- Consulta, edición y eliminación de tareas.
+- Clasificación por estado y prioridad.
+- Búsqueda por título, descripción o responsable.
+- Resumen de tareas totales, pendientes, en proceso y completadas.
+- Diseño adaptable a computadoras, tabletas y dispositivos móviles.
+- Panel administrativo de Django.
 
 ## Tecnologías
 
 - Python 3.12
 - Django 5.2
 - SQLite
-- HTML y CSS responsive
+- HTML5
+- CSS3 y diseño responsive
 - Lucide Icons
+
+## Estructura
+
+```text
+tigtask-app/
+|-- assets/
+|   `-- capturas/
+|       |-- inicio-sesion.jpg
+|       |-- panel-principal.jpg
+|       |-- registro-movil.jpg
+|       `-- registro-usuarios.jpg
+|-- gestor_tareas/
+|   |-- settings.py
+|   `-- urls.py
+|-- static/
+|   |-- css/
+|   `-- img/
+|-- tareas/
+|   |-- migrations/
+|   |-- admin.py
+|   |-- forms.py
+|   |-- models.py
+|   |-- tests.py
+|   |-- urls.py
+|   `-- views.py
+|-- templates/
+|   |-- registration/
+|   `-- tareas/
+|-- manage.py
+|-- requirements.txt
+`-- README.md
+```
 
 ## Instalación
 
@@ -33,39 +93,12 @@ python manage.py runserver
 
 Abrir `http://127.0.0.1:8000/` en el navegador.
 
-La base de datos local, los archivos cargados y el entorno virtual están excluidos del repositorio. Cada instalación comienza con datos independientes.
-
 ## Pruebas
 
 ```powershell
 python manage.py test
 ```
 
-## Panel administrativo
+## Datos locales
 
-Crear un usuario administrador:
-
-```powershell
-python manage.py createsuperuser
-```
-
-Después, abrir `http://127.0.0.1:8000/admin/`.
-
-## Política sencilla de ramas y commits
-
-- `main`: versión estable.
-- `develop`: integración de cambios.
-- `feature/nombre`: nuevas funciones.
-- `fix/nombre`: corrección de errores.
-
-Formato sugerido para los commits:
-
-```text
-tipo: descripción breve
-```
-
-Ejemplos: `feat: agregar filtro por prioridad` y `fix: corregir edición de tareas`.
-
-## Versión
-
-Versión actual: **1.0.0**. Los cambios se detallan en `CHANGELOG.md`.
+La base de datos, el entorno virtual y los archivos cargados por los usuarios están excluidos del repositorio. Cada instalación comienza con sus propios datos.
