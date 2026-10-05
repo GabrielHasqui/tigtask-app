@@ -1,0 +1,75 @@
+{% load static tareas_extras %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Sistema sencillo para gestionar las tareas de un equipo de desarrollo.">
+    <title>{% block title %}TigTask{% endblock %}</title>
+    <link rel="icon" href="{% static 'img/tigtask-icon.png' %}" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+    <header class="site-header">
+        <div class="container header-content">
+            <a class="brand" href="{% url 'tareas:lista' %}" aria-label="Ir al inicio">
+                <span class="brand-mark" aria-hidden="true">
+                    <img src="{% static 'img/tigtask-icon.png' %}" alt="">
+                </span>
+                <span>
+                    <strong>TigTask</strong>
+                    <small>Gestión de tareas</small>
+                </span>
+            </a>
+            <nav aria-label="Navegación principal">
+                <span class="nav-user" title="{{ request.user.get_full_name|default:request.user.email }}">
+                    {% if request.user.perfil.foto %}
+                        <img class="nav-avatar" src="{{ request.user.perfil.foto.url }}" alt="Foto de {{ request.user|nombre_corto }}">
+                    {% else %}
+                        <img class="nav-avatar" src="{% static 'img/tigtask-avatar-default.png' %}" alt="Avatar predeterminado de {{ request.user|nombre_corto }}">
+                    {% endif %}
+                    <span>{{ request.user|nombre_corto }}</span>
+                </span>
+                <form class="logout-form" method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="nav-logout" type="submit" aria-label="Cerrar sesión" title="Cerrar sesión">
+                        <i data-lucide="log-out" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main id="contenido" class="container page-content">
+        {% if messages %}
+            <div class="messages" aria-live="polite">
+                {% for message in messages %}
+                    <div class="message message-success">
+                        <i data-lucide="circle-check" aria-hidden="true"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <span>© TigTask · Versión 1.0.0</span>
+            <a class="footer-support" href="mailto:ghasquio@unemi.edu.ec">
+                <i data-lucide="mail" aria-hidden="true"></i>
+                Soporte: ghasquio@unemi.edu.ec
+            </a>
+        </div>
+    </footer>
+    <script src="https://unpkg.com/lucide@1.50.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons({attrs: {"stroke-width": 2}});</script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
