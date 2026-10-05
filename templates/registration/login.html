@@ -1,0 +1,81 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Acceso al sistema de gestión de tareas TigTask.">
+    <title>Iniciar sesión | TigTask</title>
+    <link rel="icon" href="{% static 'img/tigtask-icon.png' %}" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="login-body">
+    <main class="login-page">
+        <section class="login-card" aria-labelledby="login-title">
+            <div class="login-visual">
+                <a class="login-brand" href="{% url 'login' %}" aria-label="TigTask">
+                    <img src="{% static 'img/tigtask-icon.png' %}" alt="">
+                    <span>
+                        <strong>TigTask</strong>
+                        <small>Gestión de tareas</small>
+                    </span>
+                </a>
+                <div class="login-copy">
+                    <p class="eyebrow login-eyebrow">ORGANIZA · AVANZA · COMPLETA</p>
+                    <h2>Tu equipo y sus tareas, siempre en orden.</h2>
+                    <p>Un espacio sencillo para convertir pendientes en resultados.</p>
+                </div>
+                <img class="login-mascot" src="{% static 'img/tigtask-login.png' %}" alt="Tigre de TigTask mostrando una lista de tareas">
+            </div>
+
+            <div class="login-form-panel">
+                <div class="login-form-wrap">
+                    <span class="login-welcome-icon" aria-hidden="true">
+                        <i data-lucide="sparkles"></i>
+                    </span>
+                    <p class="eyebrow">BIENVENIDO DE NUEVO</p>
+                    <h1 id="login-title">Inicia sesión</h1>
+                    <p class="login-intro">Accede a tu panel para continuar organizando el trabajo.</p>
+
+                    {% if form.errors %}
+                        <div class="login-error" role="alert">
+                            <i data-lucide="circle-alert" aria-hidden="true"></i>
+                            <span>El correo o la contraseña no son correctos.</span>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" class="login-form">
+                        {% csrf_token %}
+                        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                        <div class="field">
+                            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                            <div class="login-input">
+                                <i data-lucide="mail" aria-hidden="true"></i>
+                                {{ form.username }}
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                            <div class="login-input">
+                                <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+                                {{ form.password }}
+                            </div>
+                        </div>
+                        <button class="button button-primary login-submit" type="submit">
+                            Entrar a TigTask
+                            <i data-lucide="arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <p class="auth-switch">¿Aún no tienes una cuenta? <a href="{% url 'registro' %}">Crear cuenta</a></p>
+                    <p class="login-help"><i data-lucide="shield-check" aria-hidden="true"></i> Acceso seguro para tu equipo de trabajo.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="https://unpkg.com/lucide@1.50.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons({attrs: {"stroke-width": 2}});</script>
+</body>
+</html>
