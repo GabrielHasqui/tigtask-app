@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Editar tarea{% else %}Nueva tarea{% endif %} | TigTask{% endblock %}
+
+{% block content %}
+<div class="narrow-page">
+    <a class="back-link" href="{% if object %}{% url 'tareas:detalle' object.pk %}{% else %}{% url 'tareas:lista' %}{% endif %}"><i data-lucide="arrow-left" aria-hidden="true"></i> Volver</a>
+
+    <section class="form-card">
+        <div class="form-heading">
+            <span class="form-icon" aria-hidden="true"><i data-lucide="{% if object %}pencil{% else %}plus{% endif %}"></i></span>
+            <div>
+                <p class="eyebrow">{% if object %}Actualizar información{% else %}Nueva actividad{% endif %}</p>
+                <h1>{% if object %}Editar tarea{% else %}Crear tarea{% endif %}</h1>
+                <p>{% if object %}Modifica únicamente los datos que necesites.{% else %}Completa los datos principales para organizar el trabajo.{% endif %}</p>
+            </div>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="form-errors" role="alert">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div class="form-grid">
+                {% for field in form %}
+                    <div class="field {% if field.name == 'titulo' or field.name == 'descripcion' %}field-full{% endif %}">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}{% if field.field.required %}<span class="required" aria-hidden="true"> *</span>{% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}<small class="help-text">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<small class="field-error" role="alert">{{ error }}</small>{% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="form-note"><span class="required">*</span> Campos obligatorios</div>
+            <div class="form-actions">
+                <a class="button button-ghost" href="{% if object %}{% url 'tareas:detalle' object.pk %}{% else %}{% url 'tareas:lista' %}{% endif %}">Cancelar</a>
+                <button class="button button-primary" type="submit">
+                    {% if object %}Guardar cambios{% else %}Crear tarea{% endif %}
+                </button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

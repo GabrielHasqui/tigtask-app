@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tarea.titulo }} | TigTask{% endblock %}
+
+{% block content %}
+<div class="narrow-page">
+    <a class="back-link" href="{% url 'tareas:lista' %}"><i data-lucide="arrow-left" aria-hidden="true"></i> Volver a las tareas</a>
+
+    <article class="detail-card">
+        <div class="detail-header">
+            <div>
+                <div class="badges">
+                    <span class="badge status-{{ tarea.estado }}">{{ tarea.get_estado_display }}</span>
+                    <span class="badge priority-label-{{ tarea.prioridad }}">Prioridad {{ tarea.get_prioridad_display|lower }}</span>
+                </div>
+                <h1>{{ tarea.titulo }}</h1>
+                <p>Creada el {{ tarea.fecha_creacion|date:"d \d\e F \d\e Y, H:i" }}</p>
+            </div>
+            <div class="detail-actions">
+                <a class="button button-secondary" href="{% url 'tareas:editar' tarea.pk %}"><i data-lucide="pencil" aria-hidden="true"></i> Editar</a>
+                <a class="button button-danger-soft" href="{% url 'tareas:eliminar' tarea.pk %}"><i data-lucide="trash-2" aria-hidden="true"></i> Eliminar</a>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2>Descripción</h2>
+            <p>{{ tarea.descripcion|linebreaksbr }}</p>
+        </div>
+
+        <dl class="detail-grid">
+            <div>
+                <dt>Responsable</dt>
+                <dd><span class="avatar" aria-hidden="true">{{ tarea.responsable|first|upper }}</span>{{ tarea.responsable }}</dd>
+            </div>
+            <div>
+                <dt>Fecha límite</dt>
+                <dd>{% if tarea.fecha_limite %}{{ tarea.fecha_limite|date:"d \d\e F \d\e Y" }}{% else %}Sin fecha límite{% endif %}</dd>
+            </div>
+            <div>
+                <dt>Última actualización</dt>
+                <dd>{{ tarea.fecha_actualizacion|date:"d M Y, H:i" }}</dd>
+            </div>
+        </dl>
+    </article>
+</div>
+{% endblock %}
