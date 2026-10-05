@@ -1,0 +1,80 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Registro de usuarios de TigTask.">
+    <title>Crear cuenta | TigTask</title>
+    <link rel="icon" href="{% static 'img/tigtask-icon.png' %}" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="login-body">
+    <main class="login-page">
+        <section class="login-card register-card" aria-labelledby="register-title">
+            <div class="login-visual register-visual">
+                <a class="login-brand" href="{% url 'login' %}" aria-label="TigTask">
+                    <img src="{% static 'img/tigtask-icon.png' %}" alt="">
+                    <span>
+                        <strong>TigTask</strong>
+                        <small>Gestión de tareas</small>
+                    </span>
+                </a>
+                <div class="login-copy">
+                    <p class="eyebrow login-eyebrow">TU ESPACIO DE TRABAJO</p>
+                    <h2>Empieza a convertir tareas en logros.</h2>
+                    <p>Crea tu cuenta y mantén tus prioridades siempre a la vista.</p>
+                </div>
+                <img class="login-mascot" src="{% static 'img/tigtask-login.png' %}" alt="Tigre de TigTask mostrando una lista de tareas">
+            </div>
+
+            <div class="login-form-panel register-form-panel">
+                <div class="login-form-wrap register-form-wrap">
+                    <p class="eyebrow">ÚNETE A TIGTASK</p>
+                    <h1 id="register-title">Crea tu cuenta</h1>
+                    <p class="login-intro">Completa tus datos para comenzar a organizar tus tareas.</p>
+
+                    {% if form.non_field_errors %}
+                        <div class="login-error" role="alert">
+                            <i data-lucide="circle-alert" aria-hidden="true"></i>
+                            <span>{{ form.non_field_errors|striptags }}</span>
+                        </div>
+                    {% endif %}
+
+                    <form method="post" class="login-form register-form">
+                        {% csrf_token %}
+                        <div class="register-form-grid">
+                            {% for field in form %}
+                                <div class="field {% if field.name == 'email' %}field-wide{% endif %}">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    <div class="login-input">
+                                        {% if field.name == 'first_name' or field.name == 'last_name' %}
+                                            <i data-lucide="user-round" aria-hidden="true"></i>
+                                        {% elif field.name == 'email' %}
+                                            <i data-lucide="mail" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+                                        {% endif %}
+                                        {{ field }}
+                                    </div>
+                                    {% for error in field.errors %}<span class="field-error">{{ error }}</span>{% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <button class="button button-primary login-submit" type="submit">
+                            Crear mi cuenta
+                            <i data-lucide="arrow-right" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                    <p class="auth-switch">¿Ya tienes una cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="https://unpkg.com/lucide@1.50.0/dist/umd/lucide.min.js"></script>
+    <script>lucide.createIcons({attrs: {"stroke-width": 2}});</script>
+</body>
+</html>
