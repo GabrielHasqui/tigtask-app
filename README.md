@@ -102,3 +102,14 @@ python manage.py test
 ## Datos locales
 
 La base de datos, el entorno virtual y los archivos cargados por los usuarios están excluidos del repositorio. Cada instalación comienza con sus propios datos.
+
+## Validación del sistema
+
+Antes de integrar cambios, comprueba la configuración y ejecuta las pruebas:
+
+```powershell
+python manage.py check
+python manage.py test
+```
+
+Estos comandos permiten identificar problemas de configuración y comprobar las funcionalidades cubiertas por las pruebas automatizadas.
